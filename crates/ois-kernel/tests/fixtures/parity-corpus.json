@@ -1,0 +1,6772 @@
+{
+ "pin": "c56f8e5",
+ "note": "Differential parity corpus. Inputs derived 1:1 from the executable oracle test suites at second-brain c56f8e5; every case names its derivation and R1/GR fixture refs. Both engines run identical inputs.",
+ "cases": [
+  {
+   "id": "resolver.r01_empty_history",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "basis": "no_visible_record",
+    "completeness": "complete"
+   }
+  },
+  {
+   "id": "resolver.r02_candidate_only",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "GR-E01",
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "candidate_knowledge",
+       "lifecycle_state": "candidate",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "working_knowledge",
+       "lifecycle_state": "working",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "basis": "candidate_or_working_only",
+    "diagnostic_kinds": [
+     "candidate_not_governing"
+    ]
+   }
+  },
+  {
+   "id": "resolver.r03_newest_governing",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "governing",
+    "envelope_recorded_at": "2026-08-05T00:00:00.000Z",
+    "authority": "current_operating_state"
+   }
+  },
+  {
+   "id": "resolver.r04_order_invariant",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "also_run_shuffled": true
+   },
+   "assert": {
+    "state": "governing",
+    "shuffled_equal": true
+   }
+  },
+  {
+   "id": "resolver.r05_supersession_related",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T22"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed-v2",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ]
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "superseded",
+    "successor_ref": "asrt-line-speed-v2"
+   }
+  },
+  {
+   "id": "resolver.r06_supersession_in_history",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T22"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "superseded"
+   }
+  },
+  {
+   "id": "resolver.r07_disputed_distinct",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing_but_disputed",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "governing_but_disputed",
+    "authority": "current_operating_state"
+   }
+  },
+  {
+   "id": "resolver.r08_terminal_distinct",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T22"
+   ],
+   "input": {
+    "corpus_a": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "retired",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "corpus_b": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "deprecated",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "retired",
+    "state_b": "deprecated"
+   }
+  },
+  {
+   "id": "resolver.r09_future_valid_excluded",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-15T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": "2026-09-01T00:00:00.000Z",
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "basis": "no_visible_record",
+    "diagnostic_kinds": [
+     "future_valid_excluded"
+    ]
+   }
+  },
+  {
+   "id": "resolver.r10_valid_at_null_unbounded",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": null,
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": "2026-08-01T00:00:00.000Z",
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "governing"
+   }
+  },
+  {
+   "id": "resolver.r11_out_of_scope_excluded",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       },
+       "scope_refs": [
+        "scope:sales"
+       ]
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": [
+      "scope:operations"
+     ],
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "diagnostic_kinds": [
+     "out_of_scope_excluded"
+    ]
+   }
+  },
+  {
+   "id": "resolver.r12_foreign_root_excluded",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:acme-ops",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "basis": "no_visible_record"
+   }
+  },
+  {
+   "id": "resolver.r13_permission_count_only",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": {
+      "decision": "permission_limited",
+      "disclosure_state": "restricted_existence_count_only",
+      "withheld_count": 1
+     },
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "permission_limited",
+    "completeness": "partial_permissions",
+    "diagnostic_kinds": [
+     "permission_withheld"
+    ],
+    "withheld_count": 1
+   }
+  },
+  {
+   "id": "resolver.r14_existence_not_disclosable",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": {
+      "decision": "denied",
+      "disclosure_state": "existence_not_disclosable",
+      "withheld_count": null
+     },
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "permission_limited",
+    "withheld_count": null
+   }
+  },
+  {
+   "id": "resolver.t01_prior_as_known_reproduces",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-08-02T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "governing",
+    "envelope_recorded_at": "2026-08-01T00:00:00.000Z"
+   }
+  },
+  {
+   "id": "resolver.t02_truncated_history_equivalent",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-08-02T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "corpus_b": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query_b": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-01T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "assert_truncated_equivalence": true
+   },
+   "assert": {
+    "equal_to_b": true
+   }
+  },
+  {
+   "id": "resolver.t03_backdated_late_recording",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-07-15T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-08-02T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "query_b": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-08-06T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "governing",
+    "envelope_recorded_at": "2026-08-01T00:00:00.000Z",
+    "state_b": "superseded"
+   }
+  },
+  {
+   "id": "resolver.t05_repeat_determinism",
+   "engine": "resolver",
+   "derivation": "packages/core/test/resolver.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-05T00:00:00.000Z",
+       "recorded_at": "2026-08-05T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "faster",
+        "superseded_assertion_ref": "asrt-line-speed"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-08-06T00:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "repeat": true
+   },
+   "assert": {
+    "repeat_equal": true
+   }
+  },
+  {
+   "id": "scenario.t01_ten_lineages",
+   "engine": "resolver",
+   "derivation": "fixtures/adversarial/r1-contract-closure/oracles.json R1-T01",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g01",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-01"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g02",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-02"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g03",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-03"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g04",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-04"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g05",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-05"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g06",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-06"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g07",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-07"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g08",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-08"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g09",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-09"
+       }
+      },
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "g10",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "lineage",
+        "predicate": "declared",
+        "object": "unit-10"
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-03T16:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    },
+    "resolve_each": true
+   },
+   "assert": {
+    "all_states": "governing",
+    "count": 10
+   }
+  },
+  {
+   "id": "scenario.gr_e01_candidate_not_governing",
+   "engine": "resolver",
+   "derivation": "Gentle Roost flagship GR-E01 + non-governance must-have; helper mirrors work candidateEnvelope",
+   "fixture_refs": [
+    "GR-E01"
+   ],
+   "input": {
+    "corpus": {
+     "target_history": [
+      {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "candidate_knowledge",
+       "lifecycle_state": "candidate",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-propose-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     ],
+     "related_records": null
+    },
+    "query": {
+     "governance_root_ref": "governance_root:gentle-roost",
+     "as_known_at": "2026-09-05T16:00:00.000Z",
+     "valid_at": null,
+     "scope_refs": null,
+     "permission": null,
+     "applicability": null
+    }
+   },
+   "assert": {
+    "state": "not_established",
+    "basis": "candidate_or_working_only",
+    "diagnostic_kinds": [
+     "candidate_not_governing"
+    ]
+   }
+  },
+  {
+   "id": "capability.c01_unauthenticated",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "propose",
+        "attach_evidence"
+       ],
+       "governing_authority": false
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "human:owner",
+     "principal_kind": "human",
+     "authenticated": false
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "authorized": false,
+    "reason": "unauthenticated"
+   }
+  },
+  {
+   "id": "capability.c02_agent_capability_gap",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "propose",
+        "attach_evidence"
+       ],
+       "governing_authority": false
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:helper",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "authorized": false,
+    "reason": "capability_not_granted"
+   }
+  },
+  {
+   "id": "capability.c03_no_matching_grant",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "propose",
+        "attach_evidence"
+       ],
+       "governing_authority": false
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:stranger",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "authorized": false,
+    "reason": "no_matching_grant"
+   }
+  },
+  {
+   "id": "capability.c04_claimed_approval_insufficient",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "propose",
+        "attach_evidence"
+       ],
+       "governing_authority": false
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:helper",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "authorized": false,
+    "reason": "capability_not_granted"
+   }
+  },
+  {
+   "id": "capability.c05_profile_root_mismatch",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:acme-ops",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "propose",
+        "attach_evidence"
+       ],
+       "governing_authority": false
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "human:owner",
+     "principal_kind": "human",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "authorized": false,
+    "reason": "profile_root_mismatch"
+   }
+  },
+  {
+   "id": "capability.c06a_delegation_in_scope",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "establish_governing"
+       ],
+       "governing_authority": true,
+       "delegated_by_principal_ref": "human:owner",
+       "delegation_scope_refs": [
+        "scope:operations"
+       ]
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:helper",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [
+     "scope:operations"
+    ]
+   },
+   "assert": {
+    "authorized": true
+   }
+  },
+  {
+   "id": "capability.c06b_delegation_out_of_scope",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "establish_governing"
+       ],
+       "governing_authority": true,
+       "delegated_by_principal_ref": "human:owner",
+       "delegation_scope_refs": [
+        "scope:operations"
+       ]
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:helper",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [
+     "scope:sales"
+    ]
+   },
+   "assert": {
+    "authorized": false
+   }
+  },
+  {
+   "id": "capability.c06c_delegation_root_wide",
+   "engine": "capability",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "profile": {
+     "schema_version": "1.0.0",
+     "profile_id": "govprof-solo",
+     "profile_version": 1,
+     "governance_root_ref": "governance_root:gentle-roost",
+     "root_scope_owner_kind": "human",
+     "grants": [
+      {
+       "principal_kind": "human",
+       "principal_ref": "human:owner",
+       "capabilities": [
+        "establish_governing",
+        "approve",
+        "propose",
+        "attach_evidence",
+        "verify",
+        "inspect"
+       ],
+       "governing_authority": true
+      },
+      {
+       "principal_kind": "agent",
+       "principal_ref": "agent:helper",
+       "capabilities": [
+        "establish_governing"
+       ],
+       "governing_authority": true,
+       "delegated_by_principal_ref": "human:owner",
+       "delegation_scope_refs": [
+        "governance_root:gentle-roost"
+       ]
+      }
+     ],
+     "disputed_basis_policy": "default_pending_approval"
+    },
+    "actor": {
+     "principal_ref": "agent:helper",
+     "principal_kind": "agent",
+     "authenticated": true
+    },
+    "capability": "establish_governing",
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [
+     "scope:sales"
+    ]
+   },
+   "assert": {
+    "authorized": true
+   }
+  },
+  {
+   "id": "write.w01_solo_establishment",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied",
+    "event_object_type": "governance_event",
+    "event_lifecycle": "governing",
+    "event_kind": "governing_transition",
+    "event_decision_ref": null,
+    "churn_key_nonempty": true
+   }
+  },
+  {
+   "id": "write.w02_event_cited_in_provenance",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied",
+    "record_cites_event": true
+   }
+  },
+  {
+   "id": "write.w03a_decision_churn_key",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": "decision:dec-1",
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied",
+    "churn_key": "decision:dec-1",
+    "event_decision_ref": "decision:dec-1"
+   }
+  },
+  {
+   "id": "write.w03b_no_decision_churn_key",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied",
+    "churn_key_equals_event_ref": true,
+    "event_decision_ref": null
+   }
+  },
+  {
+   "id": "write.w04_event_identity_deterministic",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [],
+    "run_twice": true
+   },
+   "assert": {
+    "disposition": "applied",
+    "event_equal": true,
+    "churn_key_equal": true
+   }
+  },
+  {
+   "id": "write.w05_backdated_knowledge_establishment",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-07-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied",
+    "change_class": "knowledge_establishment"
+   }
+  },
+  {
+   "id": "write.w07_stale_base",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "governing",
+      "completeness": "complete",
+      "diagnostics": [],
+      "envelope": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-02T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      "authority": "current_operating_state"
+     },
+     "base_recorded_at": "2026-08-01T00:00:00.000Z",
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "stale_requires_review",
+    "resolved_base_recorded_at": "2026-08-02T00:00:00.000Z"
+   }
+  },
+  {
+   "id": "write.w08_establishment_over_existing",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "governing",
+      "completeness": "complete",
+      "diagnostics": [],
+      "envelope": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      "authority": "current_operating_state"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "stale_requires_review"
+   }
+  },
+  {
+   "id": "write.w09_matching_base_ok",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "governing",
+      "completeness": "complete",
+      "diagnostics": [],
+      "envelope": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      "authority": "current_operating_state"
+     },
+     "base_recorded_at": "2026-08-01T00:00:00.000Z",
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition_not": "stale_requires_review"
+   }
+  },
+  {
+   "id": "write.w11_disputed_basis_default",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "governing_but_disputed",
+      "completeness": "complete",
+      "diagnostics": [],
+      "envelope": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      "authority": "current_operating_state"
+     },
+     "base_recorded_at": "2026-08-01T00:00:00.000Z",
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "pending_approval",
+    "reason_code": "disputed_basis"
+   }
+  },
+  {
+   "id": "write.w12_disputed_explicit_rule",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "explicit_rule_controlled"
+     },
+     "resolved": {
+      "state": "governing_but_disputed",
+      "completeness": "complete",
+      "diagnostics": [],
+      "envelope": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-line-speed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-08-01T00:00:00.000Z",
+       "as_known_at": "2026-08-01T00:00:00.000Z",
+       "recorded_at": "2026-08-01T00:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-1"
+       ],
+       "object": {
+        "subject": "line",
+        "predicate": "speed",
+        "object": "fast"
+       }
+      },
+      "authority": "current_operating_state"
+     },
+     "base_recorded_at": "2026-08-01T00:00:00.000Z",
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": true,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "applied"
+   }
+  },
+  {
+   "id": "write.w13_permission_limited_pending",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "permission_limited",
+      "completeness": "partial_permissions",
+      "diagnostics": [
+       {
+        "kind": "permission_withheld",
+        "withheld_count": 1
+       }
+      ]
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "pending_approval",
+    "reason_code": "permission_limited_evidence"
+   }
+  },
+  {
+   "id": "write.w14_no_capability_rejected",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "propose",
+         "attach_evidence",
+         "inspect"
+        ],
+        "governing_authority": true
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "rejected",
+    "reason_code": "insufficient_authority"
+   }
+  },
+  {
+   "id": "write.w15_replay",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": {
+      "idempotency_key": "idem-1",
+      "disposition": "applied",
+      "reason_code": null,
+      "record_ref": "assertion:asrt-line-speed",
+      "governance_event_ref": "governance_event:016f0000-0000-7000-8000-000000000001"
+     }
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "replayed",
+    "original": {
+     "idempotency_key": "idem-1",
+     "disposition": "applied",
+     "reason_code": null,
+     "record_ref": "assertion:asrt-line-speed",
+     "governance_event_ref": "governance_event:016f0000-0000-7000-8000-000000000001"
+    },
+    "no_event": true,
+    "no_churn_key": true
+   }
+  },
+  {
+   "id": "write.w16_foreign_next_error",
+   "engine": "governed_write",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:acme-ops",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "error": true
+   }
+  },
+  {
+   "id": "scenario.t27_recording_lag",
+   "engine": "governed_write",
+   "derivation": "fixtures/adversarial/r1-contract-closure/r3-fixtures.json R1-T27",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-09-02T09:00:00.000Z",
+      "as_known_at": "2026-09-03T12:00:00.000Z",
+      "recorded_at": "2026-09-03T12:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-09-03T12:00:00.000Z",
+     "observation_started_at": "2026-09-01T00:00:00.000Z",
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [],
+    "compute_recording_lag": true
+   },
+   "assert": {
+    "disposition": "applied",
+    "change_class": "governing_state_change",
+    "recording_lag_seconds": 97200
+   }
+  },
+  {
+   "id": "scenario.t29_decision_churn",
+   "engine": "governed_write",
+   "derivation": "fixtures/adversarial/r1-contract-closure/r3-fixtures.json R1-T29",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "resolved": {
+      "state": "not_established",
+      "completeness": "complete",
+      "diagnostics": [],
+      "basis": "candidate_or_working_only"
+     },
+     "base_recorded_at": null,
+     "next": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-10T00:00:00.000Z",
+      "recorded_at": "2026-08-10T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "originating_decision_ref": "decision:d29",
+     "actor_activity_ref": "activity:act-9",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "explicit_rule_controls_disputed_basis": false,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [],
+    "run_twice": true
+   },
+   "assert": {
+    "disposition": "applied",
+    "churn_key": "decision:d29",
+    "churn_key_equal": true
+   }
+  },
+  {
+   "id": "classify.assertion_on_time",
+   "engine": "classify",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "axis": "assertion",
+    "valid_from": "2026-08-10T00:00:00.000Z",
+    "observation_started_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "change_class": "governing_state_change"
+   }
+  },
+  {
+   "id": "classify.governance_rule",
+   "engine": "classify",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "axis": "governance_rule",
+    "valid_from": "2026-08-10T00:00:00.000Z",
+    "observation_started_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "change_class": "governance_rule_change"
+   }
+  },
+  {
+   "id": "classify.objective_criterion",
+   "engine": "classify",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "axis": "objective_criterion",
+    "valid_from": "2026-08-10T00:00:00.000Z",
+    "observation_started_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "change_class": "objective_criterion_change"
+   }
+  },
+  {
+   "id": "classify.backdated",
+   "engine": "classify",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T27"
+   ],
+   "input": {
+    "axis": "assertion",
+    "valid_from": "2026-07-01T00:00:00.000Z",
+    "observation_started_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "change_class": "knowledge_establishment"
+   }
+  },
+  {
+   "id": "stale_base.exact_match",
+   "engine": "stale_base",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "resolved": {
+     "state": "governing",
+     "completeness": "complete",
+     "diagnostics": [],
+     "envelope": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "authority": "current_operating_state"
+    },
+    "base_recorded_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "stale": false
+   }
+  },
+  {
+   "id": "stale_base.moved_state",
+   "engine": "stale_base",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "resolved": {
+     "state": "governing",
+     "completeness": "complete",
+     "diagnostics": [],
+     "envelope": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "authority": "current_operating_state"
+    },
+    "base_recorded_at": "2026-07-01T00:00:00.000Z"
+   },
+   "assert": {
+    "stale": true,
+    "resolved_base_recorded_at": "2026-08-01T00:00:00.000Z"
+   }
+  },
+  {
+   "id": "stale_base.none_no_record",
+   "engine": "stale_base",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "resolved": {
+     "state": "not_established",
+     "completeness": "complete",
+     "diagnostics": [],
+     "basis": "no_visible_record"
+    },
+    "base_recorded_at": null
+   },
+   "assert": {
+    "stale": false
+   }
+  },
+  {
+   "id": "stale_base.base_without_record",
+   "engine": "stale_base",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "resolved": {
+     "state": "not_established",
+     "completeness": "complete",
+     "diagnostics": [],
+     "basis": "no_visible_record"
+    },
+    "base_recorded_at": "2026-08-01T00:00:00.000Z"
+   },
+   "assert": {
+    "stale": true,
+    "resolved_base_recorded_at": null
+   }
+  },
+  {
+   "id": "accept.cr01_local_event",
+   "engine": "cross_scope_acceptance",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-accept-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "origin_snapshot": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:acme-ops",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "origin_governance_root_ref": "governance_root:acme-ops",
+     "prior_accepted_origin_digest": null,
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-10",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [],
+    "provenance_contains": [
+     "governance_root:governance_root:acme-ops"
+    ]
+   },
+   "assert": {
+    "disposition": "applied",
+    "event_kind": "cross_scope_acceptance",
+    "event_origin_root": "governance_root:acme-ops",
+    "churn_key_nonempty": true,
+    "record_root": "governance_root:gentle-roost",
+    "record_cites_event": true,
+    "record_provenance_contains": true
+   }
+  },
+  {
+   "id": "accept.cr02_refresh",
+   "engine": "cross_scope_acceptance",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-accept-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "origin_snapshot": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:acme-ops",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "origin_governance_root_ref": "governance_root:acme-ops",
+     "prior_accepted_origin_digest": "digest-of-origin-snapshot",
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-10",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": [],
+    "prior_digest_of": "origin_snapshot"
+   },
+   "assert": {
+    "disposition": "applied",
+    "transition_class": "evidence_refresh",
+    "no_event": true,
+    "no_churn_key": true,
+    "no_record": true
+   }
+  },
+  {
+   "id": "accept.cr03_agent_rejected",
+   "engine": "cross_scope_acceptance",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-accept-1",
+     "actor": {
+      "principal_ref": "agent:helper",
+      "principal_kind": "agent",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "origin_snapshot": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:acme-ops",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "origin_governance_root_ref": "governance_root:acme-ops",
+     "prior_accepted_origin_digest": null,
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-10",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "disposition": "rejected",
+    "reason_code": "insufficient_authority"
+   }
+  },
+  {
+   "id": "accept.cr04_snapshot_root_mismatch",
+   "engine": "cross_scope_acceptance",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-accept-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "origin_snapshot": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:acme-ops",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "origin_governance_root_ref": "governance_root:elsewhere",
+     "prior_accepted_origin_digest": null,
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-10",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "error": true
+   }
+  },
+  {
+   "id": "accept.cr05_same_root_error",
+   "engine": "cross_scope_acceptance",
+   "derivation": "packages/core/test/governance.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "idempotency_key": "idem-accept-1",
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "origin_snapshot": {
+      "schema_version": "1.0.0",
+      "object_type": "assertion",
+      "object_id": "asrt-line-speed",
+      "governance_root_ref": "governance_root:gentle-roost",
+      "authority_class": "current_operating_state",
+      "lifecycle_state": "governing",
+      "valid_at": "2026-08-01T00:00:00.000Z",
+      "as_known_at": "2026-08-01T00:00:00.000Z",
+      "recorded_at": "2026-08-01T00:00:00.000Z",
+      "provenance_refs": [
+       "activity:act-1"
+      ],
+      "object": {
+       "subject": "line",
+       "predicate": "speed",
+       "object": "fast"
+      }
+     },
+     "origin_governance_root_ref": "governance_root:gentle-roost",
+     "prior_accepted_origin_digest": null,
+     "originating_decision_ref": null,
+     "actor_activity_ref": "activity:act-10",
+     "now": "2026-08-10T00:00:00.000Z",
+     "observation_started_at": null,
+     "prior_outcome": null
+    },
+    "governance_root_ref": "governance_root:gentle-roost",
+    "target_scope_refs": []
+   },
+   "assert": {
+    "error": true
+   }
+  },
+  {
+   "id": "promo.p01_zero_bindings_error",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T09"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "error": true
+   }
+  },
+  {
+   "id": "promo.p02_itemwise_partial",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "GR-E3B"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      },
+      {
+       "assertion_ref": "assertion:asrt-disputed",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-disputed",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:disputed-1",
+         "evidence_digest": "sha256:disputed-1",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      },
+      "evidence:disputed-1": {
+       "evidence_ref": "evidence:disputed-1",
+       "digest": "sha256:disputed-1",
+       "disputed": true,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      },
+      "assertion:asrt-disputed": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-disputed",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "applied",
+      "reason_code": "evidence_sufficient",
+      "evidence_state": "sufficient_current",
+      "authority_state": "authorized",
+      "delta_change_class": "governing_state_change",
+      "has_churn_key": true
+     },
+     {
+      "promotion_disposition": "pending_approval",
+      "reason_code": "disputed_evidence",
+      "evidence_state": "conflicting"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p03_wrong_endpoint",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:readme",
+         "evidence_digest": "sha256:readme-current",
+         "bound_endpoint_refs": [
+          "artifact:readme"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:readme": {
+       "evidence_ref": "evidence:readme",
+       "digest": "sha256:readme-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "endpoint_binding_mismatch"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p04_binding_mismatch",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T09"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:tampered",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "evidence_binding_mismatch",
+      "evidence_state": "conflicting"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p05_stale_evidence",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-prior",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-prior",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "stale_requires_review",
+      "reason_code": "stale_evidence",
+      "evidence_state": "sufficient_but_stale"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p06_permission_limited",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": true,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "pending_approval",
+      "reason_code": "permission_limited_evidence",
+      "evidence_state": "permission_limited"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p07_evaluator_error",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": true
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "evaluator_error",
+      "evidence_state": "error"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p08_analyzer_wrong_trait",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T09"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "commitment_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": {
+        "analyzer_ref": "analyzer:static-call-graph",
+        "analyzer_version": "1.2.0",
+        "checkpoint_ref": "checkpoint:ck-1",
+        "artifact_version_ref": "artifact_version:checkout-service@3",
+        "artifact_version_digest": "sha256:impl-current"
+       },
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "oracle_not_allowed_for_trait"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p09_analyzer_applies",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "GR-E3B"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": {
+        "analyzer_ref": "analyzer:static-call-graph",
+        "analyzer_version": "1.2.0",
+        "checkpoint_ref": "checkpoint:ck-1",
+        "artifact_version_ref": "artifact_version:checkout-service@3",
+        "artifact_version_digest": "sha256:impl-current"
+       },
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "applied",
+      "confirmation_mode": "deterministic_establishment"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p10_analyzer_stale",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T28"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": {
+        "analyzer_ref": "analyzer:static-call-graph",
+        "analyzer_version": "1.2.0",
+        "checkpoint_ref": "checkpoint:ck-1",
+        "artifact_version_ref": "artifact_version:checkout-service@3",
+        "artifact_version_digest": "sha256:impl-prior"
+       },
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "stale_requires_review",
+      "reason_code": "stale_evidence",
+      "evidence_state": "sufficient_but_stale"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p11_agent_pending",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "agent:helper",
+      "principal_kind": "agent",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "pending_approval",
+      "reason_code": "insufficient_authority",
+      "authority_state": "pending_required_authority",
+      "evidence_state": "sufficient_current"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p12_ghost_denied",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": false
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "authority_denied",
+      "authority_state": "denied"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p13_over_resolved",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T01"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "governing",
+        "completeness": "complete",
+        "diagnostics": [],
+        "envelope": {
+         "schema_version": "1.0.0",
+         "object_type": "assertion",
+         "object_id": "asrt-impl-edge",
+         "governance_root_ref": "governance_root:gentle-roost",
+         "authority_class": "current_operating_state",
+         "lifecycle_state": "governing",
+         "valid_at": "2026-09-03T12:00:00.000Z",
+         "as_known_at": "2026-09-03T12:00:00.000Z",
+         "recorded_at": "2026-09-03T12:00:00.000Z",
+         "provenance_refs": [
+          "activity:act-confirm-1"
+         ],
+         "object": {
+          "subject": "line",
+          "predicate": "speed",
+          "object": "fast"
+         }
+        },
+        "authority": "current_operating_state"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "stale_requires_review",
+      "reason_code": "stale_evidence"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p14a_impact_one_sided",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T09"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "impact_dependency_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "rejected",
+      "reason_code": "insufficient_evidence"
+     }
+    ]
+   }
+  },
+  {
+   "id": "promo.p14b_impact_decision",
+   "engine": "promotion",
+   "derivation": "packages/work/test/promotion.test.ts @ c56f8e5",
+   "fixture_refs": [
+    "R1-T29"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "impact_dependency_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": [
+        "decision:dec-dep-1"
+       ]
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "applied"
+     }
+    ]
+   }
+  },
+  {
+   "id": "scenario.gr_e3b_promotion",
+   "engine": "promotion",
+   "derivation": "Gentle Roost flagship GR-E3B",
+   "fixture_refs": [
+    "GR-E3B"
+   ],
+   "input": {
+    "command": {
+     "actor": {
+      "principal_ref": "human:owner",
+      "principal_kind": "human",
+      "authenticated": true
+     },
+     "actor_activity_ref": "activity:act-confirm-1",
+     "profile": {
+      "schema_version": "1.0.0",
+      "profile_id": "govprof-solo",
+      "profile_version": 1,
+      "governance_root_ref": "governance_root:gentle-roost",
+      "root_scope_owner_kind": "human",
+      "grants": [
+       {
+        "principal_kind": "human",
+        "principal_ref": "human:owner",
+        "capabilities": [
+         "establish_governing",
+         "approve",
+         "propose",
+         "attach_evidence",
+         "verify",
+         "inspect"
+        ],
+        "governing_authority": true
+       },
+       {
+        "principal_kind": "agent",
+        "principal_ref": "agent:helper",
+        "capabilities": [
+         "propose",
+         "attach_evidence"
+        ],
+        "governing_authority": false
+       }
+      ],
+      "disputed_basis_policy": "default_pending_approval"
+     },
+     "governance_root_ref": "governance_root:gentle-roost",
+     "target_scope_refs": [
+      "scope:roost-floor"
+     ],
+     "items": [
+      {
+       "assertion_ref": "assertion:asrt-impl-edge",
+       "trait_family": "implementation_edge",
+       "candidate": {
+        "schema_version": "1.0.0",
+        "object_type": "assertion",
+        "object_id": "asrt-impl-edge",
+        "governance_root_ref": "governance_root:gentle-roost",
+        "authority_class": "candidate_knowledge",
+        "lifecycle_state": "candidate",
+        "valid_at": "2026-09-03T12:00:00.000Z",
+        "as_known_at": "2026-09-03T12:00:00.000Z",
+        "recorded_at": "2026-09-01T00:00:00.000Z",
+        "provenance_refs": [
+         "activity:act-propose-1"
+        ],
+        "object": {
+         "subject": "deploy",
+         "predicate": "implements",
+         "object": "checkout-flow",
+         "projection_trait_families": [
+          "implementation_edge"
+         ]
+        }
+       },
+       "candidate_resolved": {
+        "state": "not_established",
+        "completeness": "complete",
+        "diagnostics": [],
+        "basis": "candidate_or_working_only"
+       },
+       "edge_endpoint_refs": [
+        "artifact:checkout-service",
+        "artifact:orders-service"
+       ],
+       "evidence_bindings": [
+        {
+         "evidence_ref": "evidence:commit-42",
+         "evidence_digest": "sha256:impl-current",
+         "bound_endpoint_refs": [
+          "artifact:checkout-service"
+         ]
+        }
+       ],
+       "evidence_policy_ref": "evidence_policy:edges-v1",
+       "confirmation_activity_ref": "activity:act-confirm-1",
+       "confirmation_principal_ref": "human:owner",
+       "analyzer": null,
+       "dependency_legal_lineage_refs": []
+      }
+     ],
+     "evidence": {
+      "evidence:commit-42": {
+       "evidence_ref": "evidence:commit-42",
+       "digest": "sha256:impl-current",
+       "disputed": false,
+       "permission_limited": false,
+       "evaluator_error": false
+      }
+     },
+     "endpoints": {
+      "artifact:checkout-service": {
+       "endpoint_ref": "artifact:checkout-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      },
+      "artifact:orders-service": {
+       "endpoint_ref": "artifact:orders-service",
+       "current_digest": "sha256:impl-current",
+       "containing_artifact_refs": [
+        "artifact:monorepo"
+       ]
+      }
+     },
+     "next_by_assertion": {
+      "assertion:asrt-impl-edge": {
+       "schema_version": "1.0.0",
+       "object_type": "assertion",
+       "object_id": "asrt-impl-edge",
+       "governance_root_ref": "governance_root:gentle-roost",
+       "authority_class": "current_operating_state",
+       "lifecycle_state": "governing",
+       "valid_at": "2026-09-03T12:00:00.000Z",
+       "as_known_at": "2026-09-03T12:00:00.000Z",
+       "recorded_at": "2026-09-03T12:00:00.000Z",
+       "provenance_refs": [
+        "activity:act-confirm-1"
+       ],
+       "object": {
+        "subject": "deploy",
+        "predicate": "implements",
+        "object": "checkout-flow",
+        "projection_trait_families": [
+         "implementation_edge"
+        ]
+       }
+      }
+     },
+     "observation_started_at": "2026-08-01T00:00:00.000Z",
+     "now": "2026-09-03T12:00:00.000Z"
+    }
+   },
+   "assert": {
+    "items": [
+     {
+      "promotion_disposition": "applied",
+      "reason_code": "evidence_sufficient",
+      "evidence_state": "sufficient_current",
+      "authority_state": "authorized",
+      "delta_change_class": "governing_state_change",
+      "has_churn_key": true
+     }
+    ]
+   }
+  }
+ ]
+}

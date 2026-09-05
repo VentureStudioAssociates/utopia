@@ -332,6 +332,34 @@ async fn insert_fact_inner(
         .execute(pool)
         .await?;
     }
+
+    // OIS governed-kernel hook (spike, additive): the new fact lands in the
+    // governed kernel as a CANDIDATE envelope — nothing more, no auto-promotion.
+    // Deliberately failure-isolated: the kernel side tables are additive shadow
+    // storage; their availability must never gate the ordinary ingest path (the
+    // fact row is already committed at this point).
+    if let Err(e) = crate::ois_kernel::record_candidate_for_fact(
+        pool,
+        &crate::ois_kernel::CandidateFact {
+            fact_id: id,
+            kb_id,
+            subject_id,
+            predicate_id,
+            object_entity_id: match object {
+                FactObject::Entity(oid) => Some(oid),
+                FactObject::Value(_) => None,
+            },
+            object_value: match object {
+                FactObject::Entity(_) => None,
+                FactObject::Value(v) => Some(v),
+            },
+            valid_from: validity.from,
+        },
+    )
+    .await
+    {
+        tracing::warn!(fact_id = %id, error = %e, "OIS candidate envelope not recorded");
+    }
     Ok((id, true))
 }
 
