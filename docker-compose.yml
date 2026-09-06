@@ -62,7 +62,10 @@ services:
       # 备份 = 这个目录 + 数据库。
       - ./data:/app/data
     ports:
-      - "1516:1516"
+      # 与 db 同理：默认只绑回环。反代/公网部署用 UTOPIA_APP_BIND 放开，
+      # 例如 UTOPIA_APP_BIND=0.0.0.0:1516——默认值改成回环之前，这里一不留神
+      # 就把整个应用挂到公网。
+      - "${UTOPIA_APP_BIND:-127.0.0.1:1516}:1516"
     depends_on:
       db:
         condition: service_healthy
