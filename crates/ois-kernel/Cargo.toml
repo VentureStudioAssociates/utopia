@@ -7,7 +7,11 @@ name = "ois-kernel"
 version = "0.1.0"
 edition = "2021"
 license = "AGPL-3.0-only"
+autotests = false
 description = "OIS governed kernel port: deterministic currentness resolver, governed writes, evidence-aware promotion"
+# autotests = false: the fixture scenario engine is a module of the parity
+# test binary (it consumes parity.rs helpers via super:: paths), so cargo must
+# not autodiscover tests/fixture_scenarios.rs as a standalone test target.
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -15,3 +19,9 @@ serde_json = "1"
 sha2 = "0.10"
 
 [dev-dependencies]
+
+# The single parity test binary includes the fixture scenario engine as a
+# module; no other test targets exist.
+[[test]]
+name = "parity"
+path = "tests/parity.rs"
