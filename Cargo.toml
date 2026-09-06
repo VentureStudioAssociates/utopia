@@ -9,6 +9,7 @@ members = [
     "crates/utopia-reason",
     "crates/utopia-search",
     "crates/utopia-llm",
+    "crates/ois-kernel",
 ]
 
 [workspace.package]
@@ -19,6 +20,7 @@ repository = "https://github.com/deeplethe/utopia"
 
 [workspace.dependencies]
 utopia-core = { path = "crates/utopia-core" }
+ois-kernel = { path = "crates/ois-kernel" }
 utopia-store = { path = "crates/utopia-store" }
 
 tokio = { version = "1", features = ["full"] }

@@ -1,0 +1,17 @@
+# OIS governed kernel — spike port of the OIS TypeScript oracle semantics
+# (resolver, governed writes, evidence-aware promotion) as pure Rust logic.
+#
+# OIS-origin semantic code: AGPL-3.0-only (see CONVERGENCE.md licensing rules).
+[package]
+name = "ois-kernel"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "OIS governed kernel port: deterministic currentness resolver, governed writes, evidence-aware promotion"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+
+[dev-dependencies]
