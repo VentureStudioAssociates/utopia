@@ -292,32 +292,6 @@ fn epoch(iso: &str) -> i64 {
     epoch_seconds(iso)
 }
 
-/// Clamps `[from, to]` into the window; None when empty (`to: null` = open).
-fn clamp_window(
-    from: Option<&str>,
-    to: Option<&str>,
-    wstart: &str,
-    wend: &str,
-) -> Option<(String, String)> {
-    let raw_end = to.unwrap_or(wend);
-    let raw_start = from.unwrap_or(wstart);
-    let start = if epoch(raw_start) > epoch(wstart) {
-        raw_start
-    } else {
-        wstart
-    };
-    let end = if epoch(raw_end) < epoch(wend) {
-        raw_end
-    } else {
-        wend
-    };
-    if epoch(start) > epoch(end) {
-        None
-    } else {
-        Some((start.to_string(), end.to_string()))
-    }
-}
-
 /// One scenario event fact for window accounting.
 pub struct ScenarioEvent {
     pub class: &'static str,
@@ -327,6 +301,10 @@ pub struct ScenarioEvent {
     pub churn_key: Option<String>,
     /// The churn-key record's own recorded_at (Decision/Event envelope).
     pub churn_key_recorded_at: Option<String>,
+    /// Ported from the TS driver's ScenarioEvent model; the Rust parity
+    /// driver does not project reach (the TS driver computes it), so this
+    /// field stays fixture data only. Kept for model parity with the oracle.
+    #[allow(dead_code)]
     pub downstream_reach: u64,
 }
 
@@ -868,11 +846,11 @@ fn t11(input: &Value) -> Result<Value, String> {
     let wording = objective_env(input, "obj-11", criterion, 2, "2026-09-03T10:00:00Z");
     // Replacement: NEW criterion id at version 1 (testable obligation swap).
     let replacement_id = "c11b";
-    let replacement = objective_env(input, "obj-11", &replacement_id, 1, "2026-09-03T12:00:00Z");
+    let replacement = objective_env(input, "obj-11", replacement_id, 1, "2026-09-03T12:00:00Z");
     let resolved_wording =
-        resolve_criterion(&[v1.clone(), wording.clone()], &criterion).map_err(|e| e.0)?;
+        resolve_criterion(&[v1.clone(), wording.clone()], criterion).map_err(|e| e.0)?;
     let resolved_replacement =
-        resolve_criterion(&[wording.clone(), replacement], &replacement_id).map_err(|e| e.0)?;
+        resolve_criterion(&[wording.clone(), replacement], replacement_id).map_err(|e| e.0)?;
     // Historical replay: criterion c11 at version 1 remains reproducible
     // as-known before the wording change (kernel temporal resolve).
     let q = query_for(input, "2026-09-02T00:00:00Z", None);
@@ -1279,12 +1257,7 @@ fn confirm_edge(
         &["endpoint-1"],
         binding_endpoints,
     )?;
-    let outcomes = promote_batch(
-        input,
-        vec![item],
-        evidence.as_ref().map(std::slice::from_ref).unwrap_or(&[]),
-        endpoint_digest,
-    )?;
+    let outcomes = promote_batch(input, vec![item], evidence.as_slice(), endpoint_digest)?;
     let o = &outcomes[0];
     let resolver_state = if o.promotion_disposition == "applied" {
         "governing"

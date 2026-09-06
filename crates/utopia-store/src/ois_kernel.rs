@@ -76,6 +76,52 @@ impl<'a> PgEnvelopeStore<'a> {
             .collect()
     }
 
+    /// Root-scoped variant of `history_for_object`: governance-root filtering
+    /// happens in the query as well as the resolver — the side tables may hold
+    /// envelopes from several roots, and the read surface never lets one
+    /// session's loader scan another's.
+    pub async fn history_for_object_in_root(
+        &self,
+        gov_root: &str,
+        object_id: &str,
+    ) -> Result<Vec<KernelEnvelope>, String> {
+        let rows: Vec<(Value,)> = sqlx::query_as(
+            "SELECT payload FROM kernel_envelopes WHERE object_id = $1 AND gov_root = $2",
+        )
+        .bind(object_id)
+        .bind(gov_root)
+        .fetch_all(self.pool)
+        .await
+        .map_err(|e| e.to_string())?;
+        rows.into_iter()
+            .map(|(payload,)| serde_json::from_value(payload).map_err(|e| e.to_string()))
+            .collect()
+    }
+
+    /// Root-scoped variant of `related_records` (same supersession shape,
+    /// confined to the session's governance root).
+    pub async fn related_records_in_root(
+        &self,
+        gov_root: &str,
+        object_id: &str,
+    ) -> Result<Vec<KernelEnvelope>, String> {
+        let rows: Vec<(Value,)> = sqlx::query_as(
+            "SELECT payload FROM kernel_envelopes
+             WHERE object_id <> $1
+               AND gov_root = $2
+               AND payload->'object'->>'superseded_assertion_ref' IS NOT NULL
+               AND payload->'object'->>'superseded_assertion_ref' LIKE '%' || $1 || '%'",
+        )
+        .bind(object_id)
+        .bind(gov_root)
+        .fetch_all(self.pool)
+        .await
+        .map_err(|e| e.to_string())?;
+        rows.into_iter()
+            .map(|(payload,)| serde_json::from_value(payload).map_err(|e| e.to_string()))
+            .collect()
+    }
+
     /// Records that may declare supersession of the target: a different
     /// object whose payload object names the target as its predecessor.
     pub async fn related_records(&self, object_id: &str) -> Result<Vec<KernelEnvelope>, String> {

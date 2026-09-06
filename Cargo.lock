@@ -5252,6 +5252,7 @@ dependencies = [
  "futures-util",
  "jsonwebtoken",
  "object_store",
+ "ois-kernel",
  "oxrdf",
  "oxrdfio",
  "percent-encoding",
