@@ -13,6 +13,7 @@ utopia-core.workspace = true
 utopia-store.workspace = true
 utopia-ingest.workspace = true
 utopia-search.workspace = true
+ois-kernel.workspace = true
 utopia-llm.workspace = true
 utopia-extract = { path = "../utopia-extract" }
 sha2.workspace = true

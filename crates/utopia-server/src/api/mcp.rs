@@ -141,13 +141,13 @@ fn to_mcp_tools(openai: &Value, can_write: bool) -> Vec<Value> {
         .unwrap_or_default()
 }
 
-fn ok(id: Option<Value>, result: Value) -> Json<Value> {
+pub(crate) fn ok(id: Option<Value>, result: Value) -> Json<Value> {
     Json(json!({ "jsonrpc": "2.0", "id": id, "result": result }))
 }
 
 /// JSON-RPC 的错误不是 HTTP 的错误：**传输成功了，方法失败了**。
 /// 回 200 带 error 体，客户端才解析得动。
-fn rpc_err(id: Option<Value>, code: i64, message: &str) -> Json<Value> {
+pub(crate) fn rpc_err(id: Option<Value>, code: i64, message: &str) -> Json<Value> {
     Json(json!({
         "jsonrpc": "2.0", "id": id,
         "error": { "code": code, "message": message }
@@ -180,16 +180,33 @@ pub async fn handle(
         "ping" => ok(id, json!({})),
         // **列表跟着这枚令牌变。** 写不了的令牌看不见 `remember`——
         // 列出一个调不动的工具，等于让对面的 agent 反复试
-        "tools/list" => ok(
-            id,
-            json!({
-                // 传空的数据源列表：`query_data` 没放出来，那份描述也就不必生成
-                "tools": to_mcp_tools(&super::chat::tools_schema(can_write, &[]), can_write)
-            }),
-        ),
+        // 传空的数据源列表：`query_data` 没放出来，那份描述也就不必生成。
+        // Governed OIS tools list beside the upstream ones — the same token
+        // standing decides which of them appear.
+        "tools/list" => {
+            let mut tools = to_mcp_tools(&super::chat::tools_schema(can_write, &[]), can_write);
+            tools.extend(super::mcp_ois::tool_listings(can_write));
+            ok(id, json!({ "tools": tools }))
+        }
         "tools/call" => {
             let name = params.get("name").and_then(|n| n.as_str()).unwrap_or("");
             let args = params.get("arguments").cloned().unwrap_or(json!({}));
+            // Governed OIS tools route through the kernel boundary — its
+            // dispatcher owns standing, validation, and every governed error
+            // shape. Upstream exposure lists never contained these names.
+            if super::mcp_ois::is_wired_tool(name) {
+                let session = super::mcp_ois::GovernedSession {
+                    kb: &kb,
+                    user: &user,
+                    token_id: auth.token_id,
+                    can_write,
+                };
+                return Ok(
+                    super::mcp_ois::maybe_handle_rpc(&state, &session, name, &args, id)
+                        .await
+                        .expect("wired tools always produce a response"),
+                );
+            }
             if !is_exposed(name, can_write) {
                 // 三种「不行」要分得开，否则客户端只能反复重试：
                 // 拿不到的工具（query_data）是「这一版没放出来」，写工具是

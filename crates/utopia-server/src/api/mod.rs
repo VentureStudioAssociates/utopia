@@ -11,6 +11,7 @@ mod jobs_routes;
 mod kbs;
 mod mapping_routes;
 mod mcp;
+mod mcp_ois;
 mod members_routes;
 pub(crate) mod ontology_routes;
 mod review_routes;
