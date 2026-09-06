@@ -139,6 +139,77 @@ impl<'a> PgEnvelopeStore<'a> {
             .map(|(payload,)| serde_json::from_value(payload).map_err(|e| e.to_string()))
             .collect()
     }
+
+    /// The recorded outcome of one applied governed MCP operation — the
+    /// `governed_operations` row (oracle `PortRecordedOutcome`). Rejections
+    /// are not recorded: they never reached the kernel, and replaying
+    /// re-evaluates them deterministically.
+    pub async fn recorded_operation(
+        &self,
+        op_id: &str,
+    ) -> Result<Option<RecordedOperation>, String> {
+        let rows: Vec<(
+            String,
+            String,
+            String,
+            String,
+            chrono::DateTime<chrono::Utc>,
+        )> = sqlx::query_as(
+            "SELECT op_id, envelope_id, op_kind, actor, applied_at
+                 FROM governed_operations WHERE op_id = $1",
+        )
+        .bind(op_id)
+        .fetch_all(self.pool)
+        .await
+        .map_err(|e| e.to_string())?;
+        Ok(rows
+            .into_iter()
+            .map(
+                |(op_id, envelope_id, op_kind, actor, applied_at)| RecordedOperation {
+                    op_id,
+                    envelope_id,
+                    op_kind,
+                    actor,
+                    applied_at,
+                },
+            )
+            .next())
+    }
+
+    /// Records one applied governed MCP operation for idempotent replay.
+    /// Append-only: the operation id is the primary key, so re-recording the
+    /// same operation is a no-op — never a rewrite in place.
+    pub async fn record_mcp_operation(
+        &self,
+        op_id: &str,
+        envelope_id: &str,
+        op_kind: &str,
+        actor: &str,
+    ) -> Result<(), String> {
+        sqlx::query(
+            "INSERT INTO governed_operations (op_id, envelope_id, op_kind, actor)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (op_id) DO NOTHING",
+        )
+        .bind(op_id)
+        .bind(envelope_id)
+        .bind(op_kind)
+        .bind(actor)
+        .execute(self.pool)
+        .await
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    }
+}
+
+/// The kernel-side record of one applied governed MCP operation, as read
+/// back from `governed_operations` for replay.
+pub struct RecordedOperation {
+    pub op_id: String,
+    pub envelope_id: String,
+    pub op_kind: String,
+    pub actor: String,
+    pub applied_at: chrono::DateTime<chrono::Utc>,
 }
 
 /// Arguments for the candidate-envelope hook, projected from the fact row the

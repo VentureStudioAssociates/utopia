@@ -35,7 +35,9 @@
 //! workspace dependency line.
 
 use axum::Json;
-use chrono::DateTime;
+use chrono::{DateTime, Utc};
+use ois_kernel::canonical::canonical_digest;
+use ois_kernel::envelope::{AuthorityClass, KernelEnvelope, LifecycleState};
 use ois_kernel::governance::{
     evaluate_capability, CapabilityDecision, Grant, PrincipalBasis, Profile,
 };
@@ -57,6 +59,13 @@ fn governance_root_for(kb_id: Uuid) -> String {
     format!("ois:scope:kb:{kb_id}")
 }
 
+/// Server clock in the oracle's instant format (millisecond UTC, `Z`).
+/// The resolver compares instants byte-wise; every instant this surface
+/// writes must match the fork's stored corpora.
+fn iso_now(now: DateTime<Utc>) -> String {
+    now.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string()
+}
+
 // ------------------------------------------------------------------ registry
 
 /// Frozen tool names — MCP names carry no governance meaning; the capability
@@ -74,6 +83,8 @@ pub struct OisTool {
     pub name: &'static str,
     pub description: &'static str,
     pub kind: ToolKind,
+    pub operation_family: &'static str,
+    pub fixed_capability: Option<&'static str>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -89,26 +100,36 @@ const WIRED_TOOLS: [OisTool; 5] = [
         name: TOOL_PROPOSE_KERNEL_RECORD,
         description: "Submit one kernel record as working/candidate knowledge. Payloads asserting governing authority map to establish_governing and are denied for propose-only agents.",
         kind: ToolKind::Write,
+        operation_family: "kernel_write",
+        fixed_capability: None,
     },
     OisTool {
         name: TOOL_PROPOSE_OBJECTIVE_OPERATION,
         description: "Submit one objective operation (proposal actions apply as candidate knowledge; governing transition actions map to establish_governing and are denied for propose-only agents).",
         kind: ToolKind::Write,
+        operation_family: "objective_operation",
+        fixed_capability: None,
     },
     OisTool {
         name: TOOL_ATTACH_EVIDENCE,
         description: "Attach evidence by appending a new candidate kernel version carrying provenance. Evidence that itself establishes governing state is a governing operation and is denied for propose-only agents.",
         kind: ToolKind::Write,
+        operation_family: "kernel_write",
+        fixed_capability: None,
     },
     OisTool {
         name: TOOL_RESOLVE_CURRENT_STATE,
         description: "Resolve the canonical currentness of one kernel object under the server-derived permission basis. States stay distinct: governing, governing_but_disputed, not_established, superseded, retired, deprecated, permission_limited.",
         kind: ToolKind::Read,
+        operation_family: "kernel_write",
+        fixed_capability: Some("propose"),
     },
     OisTool {
         name: TOOL_SLICE_AS_KNOWN,
         description: "Slice one kernel object as known at an as_known_at instant (later recordings are invisible) and resolve its currentness in that historical slice.",
         kind: ToolKind::Read,
+        operation_family: "kernel_write",
+        fixed_capability: Some("propose"),
     },
 ];
 
@@ -305,6 +326,7 @@ impl OisBoundaryError {
 pub struct WiredEvaluator {
     pub profile: Profile,
     pub principal: PrincipalBasis,
+    pub actor_activity_ref: String,
     pub governance_root_ref: String,
 }
 
@@ -370,9 +392,12 @@ pub fn wire_evaluator(
         authenticated: true,
     };
 
+    let actor_activity_ref = format!("activity:utopia-mcp-token-{token_id}");
+
     let wired = WiredEvaluator {
         profile,
         principal,
+        actor_activity_ref,
         governance_root_ref,
     };
 
@@ -516,6 +541,586 @@ pub fn evaluate_read(
     })
 }
 
+// ----------------------------------------------------- capability derivation
+
+/// Reads the required capability off an *already validated* payload. The
+/// payload's own authority claims decide what the operation constitutes;
+/// server-side evaluation then decides whether this Principal holds it
+/// (oracle `requiredCapability`). Caller claims of approval or
+/// authentication stay provenance — never authority.
+fn required_capability(tool: &OisTool, payload: &Value) -> Result<&'static str, OisBoundaryError> {
+    if let Some(fixed) = tool.fixed_capability {
+        return Ok(fixed);
+    }
+
+    /// The governing claim rule (oracle: authority class in the governing pair
+    /// or lifecycle `governing` — contract coherence ties the rest to these).
+    fn claims_governing(payload: &Value) -> bool {
+        let authority = payload.get("authority_class").and_then(Value::as_str);
+        let lifecycle = payload.get("lifecycle_state").and_then(Value::as_str);
+        matches!(
+            authority,
+            Some("protected_constraint") | Some("current_operating_state")
+        ) || lifecycle == Some("governing")
+    }
+
+    match tool.name {
+        TOOL_PROPOSE_KERNEL_RECORD => Ok(if claims_governing(payload) {
+            "establish_governing"
+        } else {
+            "propose"
+        }),
+        TOOL_ATTACH_EVIDENCE => Ok(if claims_governing(payload) {
+            // Evidence that itself establishes governing state is a governing
+            // operation, not an evidential one — same rule as propose.
+            "establish_governing"
+        } else {
+            "attach_evidence"
+        }),
+        TOOL_PROPOSE_OBJECTIVE_OPERATION => {
+            let action = payload.get("action").and_then(Value::as_str);
+            Ok(match action {
+                Some("propose_create") | Some("propose_revision") => "propose",
+                _ => "establish_governing",
+            })
+        }
+        other => Err(OisBoundaryError::new(
+            "family_not_wired",
+            format!("tool '{other}' has no capability mapping — registry is misconfigured"),
+        )),
+    }
+}
+
+// ------------------------------------------------------------------ envelopes
+
+/// The typed-operation envelope returned for every write invocation — the
+/// oracle's `OISTypedOperationV1` shape. Denials are envelopes too: distinct
+/// outcomes, never silent no-ops.
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct TypedOperationEnvelope {
+    pub schema_version: String,
+    pub operation_id: String,
+    pub operation_family: &'static str,
+    pub actor_principal_ref: String,
+    pub actor_activity_ref: String,
+    pub idempotency_key: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub replay_of_operation_id: Option<String>,
+    pub target_refs: Vec<String>,
+    pub base_state: BaseState,
+    pub authority_state: &'static str,
+    pub disposition: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reason_code: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub result_resource_refs: Option<Vec<String>>,
+    pub submitted_at: String,
+    pub resolved_at: Option<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BaseState {
+    pub base_ref: String,
+}
+
+fn operation_id(tool: &OisTool, idempotency_key: &str) -> String {
+    format!("mcp:{}:{}", tool.name, idempotency_key)
+}
+
+/// The well-formed, contract-valid invocation whose capability the wired
+/// Principal does not hold. Nothing is recorded — the denial is not a silent
+/// write either; replaying re-evaluates deterministically (a later grant
+/// change is honored).
+fn rejected_envelope(
+    tool: &OisTool,
+    idempotency_key: &str,
+    wired: &WiredEvaluator,
+    now: &str,
+) -> TypedOperationEnvelope {
+    TypedOperationEnvelope {
+        schema_version: "1.0.0".to_string(),
+        base_state: BaseState {
+            // No kernel state was read as base; the ref names the boundary
+            // denial itself so base_ref stays meaningful and non-empty.
+            base_ref: format!("ois-denied:{}:{}", tool.name, idempotency_key),
+        },
+        operation_id: operation_id(tool, idempotency_key),
+        operation_family: tool.operation_family,
+        actor_principal_ref: wired.principal.principal_ref.clone(),
+        actor_activity_ref: wired.actor_activity_ref.clone(),
+        idempotency_key: idempotency_key.to_string(),
+        replay_of_operation_id: None,
+        target_refs: vec![],
+        authority_state: "denied",
+        disposition: "rejected",
+        reason_code: Some("authority_denied".to_string()),
+        result_resource_refs: None,
+        submitted_at: now.to_string(),
+        resolved_at: None,
+    }
+}
+
+/// The applied envelope for a candidate that just landed. `base_ref` names
+/// the record itself — the propose-only boundary holds no prior governing
+/// state to conflict with (oracle `applyCandidate`).
+fn applied_envelope(
+    tool: &OisTool,
+    idempotency_key: &str,
+    record_ref: &str,
+    wired: &WiredEvaluator,
+    now: &str,
+) -> TypedOperationEnvelope {
+    TypedOperationEnvelope {
+        schema_version: "1.0.0".to_string(),
+        base_state: BaseState {
+            base_ref: record_ref.to_string(),
+        },
+        operation_id: operation_id(tool, idempotency_key),
+        operation_family: tool.operation_family,
+        actor_principal_ref: wired.principal.principal_ref.clone(),
+        actor_activity_ref: wired.actor_activity_ref.clone(),
+        idempotency_key: idempotency_key.to_string(),
+        replay_of_operation_id: None,
+        target_refs: vec![record_ref.to_string()],
+        authority_state: "authorized",
+        disposition: "applied",
+        reason_code: Some("evidence_sufficient".to_string()),
+        result_resource_refs: Some(vec![record_ref.to_string()]),
+        submitted_at: now.to_string(),
+        resolved_at: Some(now.to_string()),
+    }
+}
+
+/// Idempotent replay: the recorded outcome returned, never a second record
+/// (oracle `replayEnvelope`).
+fn replay_envelope(
+    tool: &OisTool,
+    idempotency_key: &str,
+    prior: &utopia_store::ois_kernel::RecordedOperation,
+    wired: &WiredEvaluator,
+    now: &str,
+) -> TypedOperationEnvelope {
+    TypedOperationEnvelope {
+        schema_version: "1.0.0".to_string(),
+        base_state: BaseState {
+            base_ref: prior.envelope_id.clone(),
+        },
+        operation_id: prior.op_id.clone(),
+        operation_family: tool.operation_family,
+        actor_principal_ref: wired.principal.principal_ref.clone(),
+        actor_activity_ref: wired.actor_activity_ref.clone(),
+        idempotency_key: idempotency_key.to_string(),
+        replay_of_operation_id: Some(prior.op_id.clone()),
+        target_refs: vec![prior.envelope_id.clone()],
+        authority_state: "authorized",
+        disposition: "applied",
+        reason_code: Some("replay_acknowledged".to_string()),
+        result_resource_refs: Some(vec![prior.envelope_id.clone()]),
+        submitted_at: now.to_string(),
+        resolved_at: Some(prior.applied_at.to_rfc3339()),
+    }
+}
+
+// -------------------------------------------------------- write validation
+
+/// Write invocation shape: `{ idempotency_key, payload }` — nothing else may
+/// ride along (the oracle compiles exactly this wrapper around each payload
+/// contract).
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct WriteInvocation {
+    idempotency_key: String,
+    payload: Value,
+}
+
+/// The kernel record payload, validated against the fork's envelope contract
+/// (the 11 canonical fields; unknown top-level fields rejected fail-closed).
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct KernelPayload {
+    schema_version: String,
+    object_type: String,
+    object_id: String,
+    governance_root_ref: String,
+    #[serde(default)]
+    scope_refs: Option<Vec<String>>,
+    authority_class: AuthorityClass,
+    lifecycle_state: LifecycleState,
+    valid_at: Option<String>,
+    as_known_at: String,
+    recorded_at: String,
+    provenance_refs: Vec<String>,
+    object: Value,
+}
+
+/// The objective-operation payload (frozen action vocabulary; the inner
+/// payload stays a free object the record builder projects).
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ObjectiveOperationPayload {
+    schema_version: String,
+    action: String,
+    #[serde(default)]
+    objective_ref: Option<String>,
+    #[serde(default)]
+    base_objective_version: Option<i64>,
+    payload: Value,
+}
+
+/// The MCP-local evidence payload: what the evidence is about, and the
+/// evidence itself. It lands as a candidate record that references its
+/// target — it never mutates the target.
+#[derive(Debug, Clone, Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct EvidencePayload {
+    target_object_id: String,
+    evidence: Value,
+}
+
+const OBJECTIVE_ACTIONS: [&str; 8] = [
+    "propose_create",
+    "propose_revision",
+    "activate_version",
+    "pause",
+    "retire",
+    "deprecate",
+    "criteria_change",
+    "review_policy_change",
+];
+
+fn validate_write_invocation(args: &Value) -> Result<WriteInvocation, OisBoundaryError> {
+    let invocation: WriteInvocation = serde_json::from_value(args.clone()).map_err(|e| {
+        schema_violation(format!(
+            "write invocation must be {{ idempotency_key, payload }}: {e}"
+        ))
+    })?;
+    if invocation.idempotency_key.is_empty() {
+        return Err(schema_violation(
+            "idempotency_key must be a non-empty string",
+        ));
+    }
+    Ok(invocation)
+}
+
+fn validate_kernel_payload(payload: &Value) -> Result<KernelPayload, OisBoundaryError> {
+    let parsed: KernelPayload = serde_json::from_value(payload.clone()).map_err(|e| {
+        schema_violation(format!("payload does not satisfy the kernel contract: {e}"))
+    })?;
+    if parsed.schema_version != "1.0.0" {
+        return Err(schema_violation(format!(
+            "payload schema_version '{}' is not '1.0.0'",
+            parsed.schema_version
+        )));
+    }
+    if parsed.object_type.is_empty() || parsed.object_id.is_empty() {
+        return Err(schema_violation(
+            "object_type and object_id must be non-empty",
+        ));
+    }
+    if parsed.provenance_refs.is_empty() {
+        return Err(schema_violation(
+            "provenance_refs must carry at least one ref",
+        ));
+    }
+    // The authority/lifecycle coupling the kernel contract enforces
+    // (candidate/working cannot carry governing lifecycle, and vice versa).
+    // Incoherent input fails loud here rather than resolving nonsense later.
+    if parsed.lifecycle_state.is_candidate_or_working()
+        != parsed.authority_class.is_candidate_or_working()
+    {
+        return Err(schema_violation(format!(
+            "lifecycle '{}' is incompatible with authority '{}'",
+            parsed.lifecycle_state.as_str(),
+            parsed.authority_class.as_str()
+        )));
+    }
+    require_rfc3339(&parsed.as_known_at, "as_known_at")?;
+    require_rfc3339(&parsed.recorded_at, "recorded_at")?;
+    if let Some(valid_at) = &parsed.valid_at {
+        require_rfc3339(valid_at, "valid_at")?;
+    }
+    Ok(parsed)
+}
+
+fn validate_objective_payload(
+    payload: &Value,
+) -> Result<ObjectiveOperationPayload, OisBoundaryError> {
+    let parsed: ObjectiveOperationPayload =
+        serde_json::from_value(payload.clone()).map_err(|e| {
+            schema_violation(format!(
+                "payload does not satisfy the objective-operations contract: {e}"
+            ))
+        })?;
+    if parsed.schema_version != "1.0.0" {
+        return Err(schema_violation(format!(
+            "payload schema_version '{}' is not '1.0.0'",
+            parsed.schema_version
+        )));
+    }
+    if !OBJECTIVE_ACTIONS.contains(&parsed.action.as_str()) {
+        return Err(schema_violation(format!(
+            "action '{}' is not in the frozen objective-operation vocabulary",
+            parsed.action
+        )));
+    }
+    Ok(parsed)
+}
+
+fn validate_evidence_payload(payload: &Value) -> Result<EvidencePayload, OisBoundaryError> {
+    let parsed: EvidencePayload = serde_json::from_value(payload.clone()).map_err(|e| {
+        schema_violation(format!(
+            "payload does not satisfy the evidence contract: {e}"
+        ))
+    })?;
+    if parsed.target_object_id.is_empty() {
+        return Err(schema_violation("target_object_id must be non-empty"));
+    }
+    if !parsed.evidence.is_object() {
+        return Err(schema_violation("evidence must be an object"));
+    }
+    Ok(parsed)
+}
+
+// ----------------------------------------------------------- write pipeline
+
+/// The outcome of one governed write invocation, decided purely (no storage):
+/// the boundary then persists exactly what was decided — nothing more.
+#[derive(Debug)]
+pub enum WriteOutcome {
+    /// Capability denied. Nothing recorded, nothing written; replaying
+    /// re-evaluates (a later grant change is honored).
+    Rejected(TypedOperationEnvelope),
+    /// The candidate landed: the kernel envelope to persist, the record ref
+    /// it will be stored under, and the response envelope reporting it.
+    Applied {
+        kernel: Box<KernelEnvelope>,
+        record_ref: String,
+        response: TypedOperationEnvelope,
+    },
+}
+
+/// Builds the CANDIDATE kernel envelope for a validated kernel-record
+/// payload. Timestamps and provenance are server-derived (the oracle's
+/// rule): the client's as_known_at is a knowledge claim, recorded_at is the
+/// server clock, and the server-derived activity ref rides with the client's
+/// claimed provenance.
+fn candidate_kernel_envelope(
+    wired: &WiredEvaluator,
+    payload: KernelPayload,
+    now: &str,
+) -> KernelEnvelope {
+    let mut provenance_refs = payload.provenance_refs;
+    provenance_refs.push(wired.actor_activity_ref.clone());
+    KernelEnvelope {
+        schema_version: "1.0.0".to_string(),
+        object_type: payload.object_type,
+        object_id: payload.object_id,
+        governance_root_ref: wired.governance_root_ref.clone(),
+        scope_refs: payload.scope_refs,
+        authority_class: payload.authority_class,
+        lifecycle_state: payload.lifecycle_state,
+        valid_at: payload.valid_at,
+        as_known_at: payload.as_known_at,
+        recorded_at: now.to_string(),
+        provenance_refs,
+        object: payload.object,
+    }
+}
+
+/// Objective operations from a propose-only agent land as candidate
+/// knowledge ABOUT the objective. Governing transition actions never even
+/// reach this builder — the capability gate maps them to
+/// establish_governing, which no wired agent grant holds.
+fn candidate_objective_envelope(
+    wired: &WiredEvaluator,
+    payload: ObjectiveOperationPayload,
+    now: &str,
+) -> KernelEnvelope {
+    let object_id = payload
+        .objective_ref
+        .unwrap_or_else(|| canonical_digest(&payload.payload));
+    KernelEnvelope {
+        schema_version: "1.0.0".to_string(),
+        object_type: "objective".to_string(),
+        object_id,
+        governance_root_ref: wired.governance_root_ref.clone(),
+        scope_refs: None,
+        authority_class: AuthorityClass::CandidateKnowledge,
+        lifecycle_state: LifecycleState::Candidate,
+        valid_at: None,
+        as_known_at: now.to_string(),
+        recorded_at: now.to_string(),
+        provenance_refs: vec![wired.actor_activity_ref.clone()],
+        object: json!({
+            "action": payload.action,
+            "base_objective_version": payload.base_objective_version,
+            "payload": payload.payload,
+        }),
+    }
+}
+
+/// Evidence lands as a content-addressed candidate record that references
+/// its target. It never mutates the target.
+fn candidate_evidence_envelope(
+    wired: &WiredEvaluator,
+    payload: EvidencePayload,
+    now: &str,
+) -> Result<KernelEnvelope, OisBoundaryError> {
+    let payload_json = serde_json::to_value(&payload).map_err(|e| {
+        OisBoundaryError::new("internal_error", format!("evidence serialize failed: {e}"))
+    })?;
+    Ok(KernelEnvelope {
+        schema_version: "1.0.0".to_string(),
+        object_type: "evidence".to_string(),
+        object_id: canonical_digest(&payload_json),
+        governance_root_ref: wired.governance_root_ref.clone(),
+        scope_refs: None,
+        authority_class: AuthorityClass::CandidateKnowledge,
+        lifecycle_state: LifecycleState::Candidate,
+        valid_at: None,
+        as_known_at: now.to_string(),
+        recorded_at: now.to_string(),
+        provenance_refs: vec![wired.actor_activity_ref.clone()],
+        object: json!({
+            "target_object_id": payload.target_object_id,
+            "evidence": payload.evidence,
+        }),
+    })
+}
+
+/// The propose-only evaluation: what the payload constitutes → whether the
+/// wired Principal may do it → the candidate that lands or the rejection
+/// envelope that reports the denial.
+fn evaluate_write(
+    wired: &WiredEvaluator,
+    tool: &OisTool,
+    invocation: &WriteInvocation,
+    now: &str,
+) -> Result<WriteOutcome, OisBoundaryError> {
+    let capability = required_capability(tool, &invocation.payload)?;
+
+    if let CapabilityDecision::Denied { .. } = evaluate_capability(
+        &wired.profile,
+        &wired.principal,
+        capability,
+        &wired.governance_root_ref,
+        &[],
+    ) {
+        return Ok(WriteOutcome::Rejected(rejected_envelope(
+            tool,
+            &invocation.idempotency_key,
+            wired,
+            now,
+        )));
+    }
+
+    let kernel = match tool.name {
+        TOOL_PROPOSE_KERNEL_RECORD => {
+            let payload = validate_kernel_payload(&invocation.payload)?;
+            // Cross-root submissions never record — profiles do not cross
+            // governance roots (the same isolation the reads enforce).
+            if payload.governance_root_ref != wired.governance_root_ref {
+                return Err(OisBoundaryError::new(
+                    "governance_root_mismatch",
+                    format!(
+                        "payload targets '{}'; the wired profile owns '{}'",
+                        payload.governance_root_ref, wired.governance_root_ref
+                    ),
+                ));
+            }
+            candidate_kernel_envelope(wired, payload, now)
+        }
+        TOOL_PROPOSE_OBJECTIVE_OPERATION => candidate_objective_envelope(
+            wired,
+            validate_objective_payload(&invocation.payload)?,
+            now,
+        ),
+        TOOL_ATTACH_EVIDENCE => candidate_evidence_envelope(
+            wired,
+            validate_evidence_payload(&invocation.payload)?,
+            now,
+        )?,
+        other => return Err(OisBoundaryError::unknown_tool(other)),
+    };
+
+    // Structural propose-only invariant, checked where it matters: what
+    // lands is candidate/working knowledge. No MCP invocation reaches
+    // governing state — governing writes belong to the governed promotion
+    // path, which this surface does not expose.
+    if !kernel.lifecycle_state.is_candidate_or_working() {
+        return Err(OisBoundaryError::new(
+            "internal_error",
+            "refusing to record a governing lifecycle from the propose-only boundary",
+        ));
+    }
+
+    let envelope_json = serde_json::to_value(&kernel).map_err(|e| {
+        OisBoundaryError::new("internal_error", format!("envelope serialize failed: {e}"))
+    })?;
+    let record_ref = canonical_digest(&envelope_json);
+    let response = applied_envelope(tool, &invocation.idempotency_key, &record_ref, wired, now);
+    Ok(WriteOutcome::Applied {
+        kernel: Box::new(kernel),
+        record_ref,
+        response,
+    })
+}
+
+/// The propose-only write pipeline behind `tools/call`: replay lookup →
+/// invocation validation → capability evaluation → candidate application.
+/// Applied candidates are the only writes; rejections record nothing.
+async fn handle_write(
+    store: &utopia_store::ois_kernel::PgEnvelopeStore<'_>,
+    wired: &WiredEvaluator,
+    name: &str,
+    args: &Value,
+    now: &str,
+) -> Result<Value, OisBoundaryError> {
+    let tool = wired_tool(name).ok_or_else(|| OisBoundaryError::unknown_tool(name))?;
+    let invocation = validate_write_invocation(args)?;
+    let op_id = operation_id(tool, &invocation.idempotency_key);
+
+    // Idempotent replay: a recorded operation returns its recorded outcome —
+    // never a second record.
+    if let Some(prior) = store.recorded_operation(&op_id).await.map_err(|e| {
+        OisBoundaryError::new("internal_error", format!("kernel store read failed: {e}"))
+    })? {
+        let envelope = replay_envelope(tool, &invocation.idempotency_key, &prior, wired, now);
+        return Ok(operation_response(&envelope));
+    }
+
+    match evaluate_write(wired, tool, &invocation, now)? {
+        WriteOutcome::Rejected(envelope) => Ok(operation_response(&envelope)),
+        WriteOutcome::Applied {
+            kernel,
+            record_ref,
+            response,
+        } => {
+            // Persist the candidate first (FK order), then the operation row
+            // that enables replay. Both are idempotent on conflict.
+            store.record_envelope(&kernel).await.map_err(|e| {
+                OisBoundaryError::new("internal_error", format!("kernel write failed: {e}"))
+            })?;
+            store
+                .record_mcp_operation(&op_id, &record_ref, name, &wired.principal.principal_ref)
+                .await
+                .map_err(|e| {
+                    OisBoundaryError::new("internal_error", format!("operation record failed: {e}"))
+                })?;
+            Ok(operation_response(&response))
+        }
+    }
+}
+
+/// The MCP content response for a typed-operation envelope.
+fn operation_response(envelope: &TypedOperationEnvelope) -> Value {
+    let body = serde_json::to_string(envelope).unwrap_or_default();
+    json!({
+        "content": [{ "type": "text", "text": body }],
+        "isError": false,
+    })
+}
+
 // ------------------------------------------------------------------ dispatch
 
 /// The authenticated MCP session as seen by the governed surface: every field
@@ -599,14 +1204,11 @@ pub async fn maybe_handle_rpc(
                     );
                     super::mcp::rpc_err(id, -32601, &message)
                 } else {
-                    // The propose-only application path lands with the
-                    // governed-write wiring (stage 4c, second commit); the
-                    // validation/gating pipeline is in place either way.
-                    let err = OisBoundaryError::new(
-                        "family_not_wired",
-                        format!("tool '{name}' is not wired for application yet"),
-                    );
-                    super::mcp::rpc_err(id, err.rpc_code(), &err.message)
+                    let store = utopia_store::ois_kernel::PgEnvelopeStore::new(&state.pool);
+                    match handle_write(&store, &wired, name, args, &iso_now(Utc::now())).await {
+                        Ok(result) => super::mcp::ok(id, result),
+                        Err(err) => super::mcp::rpc_err(id, err.rpc_code(), &err.message),
+                    }
                 }
             }
         },
@@ -907,5 +1509,252 @@ mod tests {
             .capabilities
             .iter()
             .any(|c| c == "establish_governing" || c == "approve"));
+    }
+
+    // ------------------------------------------------ write-path fixtures
+
+    fn kernel_payload(authority: &str, lifecycle: &str, object_id: &str) -> Value {
+        json!({
+            "schema_version": "1.0.0",
+            "object_type": "assertion",
+            "object_id": object_id,
+            "governance_root_ref": root(),
+            "scope_refs": Value::Null,
+            "authority_class": authority,
+            "lifecycle_state": lifecycle,
+            "valid_at": Value::Null,
+            "as_known_at": "2026-09-05T00:00:00.000Z",
+            "recorded_at": "2026-09-05T00:00:00.000Z",
+            "provenance_refs": ["activity:client"],
+            "object": { "statement": "line speed is 130" },
+        })
+    }
+
+    fn objective_payload(action: &str) -> Value {
+        json!({
+            "schema_version": "1.0.0",
+            "action": action,
+            "payload": { "title": "hold the line" },
+        })
+    }
+
+    fn evidence_payload() -> Value {
+        json!({
+            "target_object_id": "asrt-line-speed",
+            "evidence": { "digest": "sha256:abc", "source_ref": "notion:page-9" },
+        })
+    }
+
+    fn write_args(payload: Value) -> Value {
+        json!({ "idempotency_key": "idem-1", "payload": payload })
+    }
+
+    #[test]
+    fn governing_claim_is_rejected_fail_closed() {
+        let session = wired();
+        let tool = wired_tool(TOOL_PROPOSE_KERNEL_RECORD).expect("tool present");
+        let invocation = validate_write_invocation(&write_args(kernel_payload(
+            "current_operating_state",
+            "governing",
+            "asrt-line-speed",
+        )))
+        .expect("invocation validates");
+        let outcome = evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z")
+            .expect("evaluation succeeds");
+        match outcome {
+            WriteOutcome::Rejected(envelope) => {
+                assert_eq!(envelope.disposition, "rejected");
+                assert_eq!(envelope.authority_state, "denied");
+                assert_eq!(envelope.reason_code.as_deref(), Some("authority_denied"));
+                assert!(envelope.result_resource_refs.is_none());
+            }
+            WriteOutcome::Applied { .. } => {
+                panic!("a governing claim must never apply through the MCP boundary")
+            }
+        }
+    }
+
+    #[test]
+    fn candidate_proposal_applies_with_server_derived_provenance() {
+        let session = wired();
+        let tool = wired_tool(TOOL_PROPOSE_KERNEL_RECORD).expect("tool present");
+        let invocation = validate_write_invocation(&write_args(kernel_payload(
+            "candidate_knowledge",
+            "candidate",
+            "asrt-line-speed",
+        )))
+        .expect("invocation validates");
+        match evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z")
+            .expect("candidate applies")
+        {
+            WriteOutcome::Applied {
+                kernel, response, ..
+            } => {
+                assert!(kernel.lifecycle_state.is_candidate_or_working());
+                assert_eq!(kernel.authority_class.as_str(), "candidate_knowledge");
+                // recorded_at is the server clock, not the client's claim.
+                assert_eq!(kernel.recorded_at, "2026-09-06T00:00:00.000Z");
+                // The server-derived activity ref rides with the client's
+                // claimed provenance.
+                assert!(kernel
+                    .provenance_refs
+                    .iter()
+                    .any(|r| r.starts_with("activity:utopia-mcp-token-")));
+                assert_eq!(response.disposition, "applied");
+            }
+            WriteOutcome::Rejected(e) => {
+                panic!("a candidate must apply, got {:?} ({e:?})", e.disposition)
+            }
+        }
+    }
+
+    #[test]
+    fn objective_operation_is_candidate_never_governing() {
+        let session = wired();
+        let tool = wired_tool(TOOL_PROPOSE_OBJECTIVE_OPERATION).expect("tool present");
+        let invocation =
+            validate_write_invocation(&write_args(objective_payload("propose_create")))
+                .expect("invocation validates");
+        match evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z")
+            .expect("proposal applies")
+        {
+            WriteOutcome::Applied { kernel, .. } => {
+                assert_eq!(kernel.object_type, "objective");
+                assert!(kernel.lifecycle_state.is_candidate_or_working());
+            }
+            WriteOutcome::Rejected(_) => {
+                panic!("propose_create is a proposal, not a transition")
+            }
+        }
+    }
+
+    #[test]
+    fn cross_root_payload_is_rejected_before_evaluation() {
+        let session = wired();
+        let tool = wired_tool(TOOL_PROPOSE_KERNEL_RECORD).expect("tool present");
+        let mut payload = kernel_payload("candidate_knowledge", "candidate", "asrt-x");
+        payload["governance_root_ref"] = json!("ois:scope:kb:other-root");
+        let invocation =
+            validate_write_invocation(&write_args(payload)).expect("invocation validates");
+        let err = evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z")
+            .expect_err("cross-root submissions never record");
+        assert_eq!(err.reason, "governance_root_mismatch");
+    }
+
+    #[test]
+    fn structurally_no_mcp_write_reaches_governing() {
+        let session = wired();
+        // The two valid ways a payload can claim governing: a governing
+        // authority/lifecycle pair on a kernel record, or a governing
+        // transition action on an objective operation. Both must reject.
+        let governing_shapes: Vec<(&str, Value)> = vec![
+            (
+                TOOL_PROPOSE_KERNEL_RECORD,
+                kernel_payload("protected_constraint", "governing", "asrt-x"),
+            ),
+            (
+                TOOL_PROPOSE_OBJECTIVE_OPERATION,
+                objective_payload("activate_version"),
+            ),
+        ];
+        for (name, payload) in governing_shapes {
+            let tool = wired_tool(name).expect("tool present");
+            let invocation =
+                validate_write_invocation(&write_args(payload)).expect("invocation validates");
+            match evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z")
+                .expect("evaluation succeeds")
+            {
+                WriteOutcome::Rejected(_) => {}
+                WriteOutcome::Applied { .. } => panic!("{name} applied a governing claim"),
+            }
+        }
+        // Evidence cannot claim governing by construction: its contract has
+        // no authority fields, and smuggling them in is a schema violation.
+        // Either the payload contract rejects it (fail-closed) or the
+        // capability gate denies the governing claim.
+        let mut smuggled = evidence_payload();
+        smuggled["authority_class"] = json!("protected_constraint");
+        let tool = wired_tool(TOOL_ATTACH_EVIDENCE).expect("tool present");
+        let invocation =
+            validate_write_invocation(&write_args(smuggled)).expect("invocation validates");
+        match evaluate_write(&session, tool, &invocation, "2026-09-06T00:00:00.000Z") {
+            Ok(WriteOutcome::Rejected(_)) => {}
+            Ok(WriteOutcome::Applied { .. }) => panic!("smuggled governing evidence applied"),
+            Err(err) => assert_eq!(err.reason, "payload_schema_violation"),
+        }
+    }
+
+    #[test]
+    fn replay_returns_the_recorded_outcome() {
+        let session = wired();
+        let tool = wired_tool(TOOL_PROPOSE_KERNEL_RECORD).expect("tool present");
+        let prior = utopia_store::ois_kernel::RecordedOperation {
+            op_id: operation_id(tool, "idem-1"),
+            envelope_id: "env-123".to_string(),
+            op_kind: TOOL_PROPOSE_KERNEL_RECORD.to_string(),
+            actor: "agent:utopia-mcp-token-3".to_string(),
+            applied_at: chrono::DateTime::parse_from_rfc3339("2026-09-05T00:00:00Z")
+                .expect("parses")
+                .with_timezone(&Utc),
+        };
+        let envelope =
+            replay_envelope(tool, "idem-1", &prior, &session, "2026-09-06T00:00:00.000Z");
+        assert_eq!(envelope.operation_id, prior.op_id);
+        assert_eq!(
+            envelope.replay_of_operation_id.as_deref(),
+            Some(prior.op_id.as_str())
+        );
+        assert_eq!(envelope.disposition, "applied");
+        assert_eq!(
+            envelope.result_resource_refs,
+            Some(vec!["env-123".to_string()])
+        );
+    }
+
+    #[test]
+    fn unauthenticated_principal_is_denied_at_the_kernel() {
+        let session = wired();
+        // The transport always authenticates before wiring; this asserts the
+        // kernel gate underneath it fails closed if that ever regressed.
+        let unauthenticated = PrincipalBasis {
+            principal_ref: session.principal.principal_ref.clone(),
+            principal_kind: "agent".to_string(),
+            authenticated: false,
+        };
+        let decision =
+            evaluate_capability(&session.profile, &unauthenticated, "propose", &root(), &[]);
+        match decision {
+            CapabilityDecision::Denied { reason, .. } => {
+                assert_eq!(reason, "unauthenticated");
+            }
+            CapabilityDecision::Authorized { .. } => {
+                panic!("an unauthenticated principal must never be authorized")
+            }
+        }
+    }
+
+    #[test]
+    fn no_grant_profile_is_denied_fail_closed() {
+        let mut session = wired();
+        // A token wired without a matching agent grant row.
+        session
+            .profile
+            .grants
+            .retain(|g| g.principal_kind != "agent");
+        let decision = evaluate_capability(
+            &session.profile,
+            &session.principal,
+            "propose",
+            &root(),
+            &[],
+        );
+        match decision {
+            CapabilityDecision::Denied { reason, .. } => {
+                assert_eq!(reason, "no_matching_grant");
+            }
+            CapabilityDecision::Authorized { .. } => {
+                panic!("a grantless agent must be denied")
+            }
+        }
     }
 }
