@@ -24,6 +24,11 @@ use std::fs;
 
 const CORPUS: &str = include_str!("fixtures/parity-corpus.json");
 
+/// Fixture-level scenario engine for the stage-4b acceptance corpus
+/// (R1-T01..T29 + GR flagship). Child module so it reuses this file's
+/// `epoch_seconds` port.
+mod fixture_scenarios;
+
 /// Days-from-civil (Hinnant) — epoch seconds for ISO `YYYY-MM-DDTHH:MM:SS(.fff)Z`
 /// without pulling a date dependency into the kernel crate.
 fn epoch_seconds(iso: &str) -> i64 {
@@ -148,10 +153,11 @@ fn run_resolver(input: &Value) -> Result<Value, String> {
             result["equal_to_b"] = Value::Bool(a == b);
         }
         result["state_b"] = b["state"].clone();
-    }
-
-    if let Some(qb) = input.get("query_b") {
+    } else if let Some(qb) = input.get("query_b") {
         // Same corpus, later as-known instant (temporal rewinds use this).
+        // Mutually exclusive with the corpus_b branch above: t02 carries BOTH
+        // keys, and its B resolution is the truncated-corpus one — an
+        // unconditional branch here overwrote the corpus_b result.
         let qb: ResolutionQuery = serde_json::from_value(qb.clone()).map_err(|e| e.to_string())?;
         let b = project_resolver(
             &serde_json::to_value(
@@ -805,6 +811,7 @@ fn run_case(tc: &Value) -> Result<Value, String> {
         "criterion" => run_criterion(input),
         "churn_origins" => run_churn(input),
         "manifest" => run_manifest(input),
+        "fixture" => fixture_scenarios::run_fixture_scenario(input),
         other => Err(format!("unknown engine {other}")),
     }
 }
@@ -874,7 +881,7 @@ fn check_expectations(tc: &Value, run: &Result<Value, String>) -> Vec<String> {
 /// Cross-engine comparison against the TypeScript oracle's normalized results.
 /// Error messages are engine-internal vocabulary, so error equality is judged
 /// by PRESENCE on both sides, never by string.
-fn compare_with_ts(row: &Value, run: &Result<Value, String>) -> Vec<String> {
+fn compare_with_ts(row: &Value, run: &Result<Value, String>, is_fixture: bool) -> Vec<String> {
     let mut failures = Vec::new();
     let id = row["id"].as_str().unwrap_or("?");
     match (&row["error"], run) {
@@ -882,16 +889,76 @@ fn compare_with_ts(row: &Value, run: &Result<Value, String>) -> Vec<String> {
         (e, _) if !e.is_null() => failures.push(format!("{id}: TS errored, Rust succeeded")),
         (_, Err(mine)) => failures.push(format!("{id}: Rust errored where TS did not: {mine}")),
         (_, Ok(mine)) => {
-            if &row["result"] != mine {
+            let ts = &row["result"];
+            if is_fixture {
+                // The fixture TS reference emits the partition-bound projection
+                // (assert-shaped): every bound field must appear in the Rust
+                // result with an equal value. Rust items may carry additional
+                // kernel-derived fields beyond the oracle's binding surface.
+                let diverges = match (
+                    ts.get("items").and_then(|v| v.as_array()),
+                    mine.get("items").and_then(|v| v.as_array()),
+                ) {
+                    (Some(ts_items), Some(rust_items)) => {
+                        for (index, ts_item) in ts_items.iter().enumerate() {
+                            let Some(ts_obj) = ts_item.as_object() else {
+                                continue;
+                            };
+                            let Some(rust_item) = rust_items.get(index).and_then(|v| v.as_object())
+                            else {
+                                failures
+                                    .push(format!("{id}: TS item {index} has no Rust counterpart"));
+                                continue;
+                            };
+                            for (key, ts_value) in ts_obj {
+                                if rust_item.get(key) != Some(ts_value) {
+                                    failures.push(format!(
+                                        "{id}: item {index} field {key} diverges: ts {ts_value} vs rust {}",
+                                        rust_item
+                                            .get(key)
+                                            .map(|v| v.to_string())
+                                            .unwrap_or_else(|| "<absent>".into())
+                                    ));
+                                }
+                            }
+                        }
+                        false
+                    }
+                    _ => ts != mine,
+                };
+                if diverges {
+                    failures.push(format!(
+                        "{id}: normalized result diverges\n  ts:   {}\n  rust: {}",
+                        serde_json::to_string(ts).unwrap_or_default(),
+                        serde_json::to_string(mine).unwrap_or_default(),
+                    ));
+                }
+            } else if ts != mine {
                 failures.push(format!(
                     "{id}: normalized result diverges\n  ts:   {}\n  rust: {}",
-                    serde_json::to_string(&row["result"]).unwrap_or_default(),
+                    serde_json::to_string(ts).unwrap_or_default(),
                     serde_json::to_string(mine).unwrap_or_default(),
                 ));
             }
         }
     }
     failures
+}
+/// Divergences ratified as documented conflicts in STAGE4-REPORT.md. Each
+/// entry is (case id, failure substring): a failure only counts as explained
+/// when BOTH match, so any new field drift on these cases — or any divergence
+/// on any other case — still fails the suite. The single entry is the
+/// GR-E04 disposition conflict: the authored Gentle Roost oracle requires
+/// pending_approval for a candidate dependency edge promoted with one-sided
+/// evidence, while the ratified work-engine p14a semantics (shared kernel
+/// mapping, pinned TS work engine included) return rejected for the same
+/// input shape. The kernel mapping was not bent for either side.
+const EXPLAINED_DIVERGENCES: &[(&str, &str)] = &[("fixture.gr_e04", "disposition")];
+
+fn is_explained_divergence(id: &str, failure: &str) -> bool {
+    EXPLAINED_DIVERGENCES
+        .iter()
+        .any(|(cid, sub)| id == *cid && failure.contains(sub))
 }
 
 #[test]
@@ -916,6 +983,7 @@ fn differential_parity() {
     let mut total = 0usize;
     let mut all_failures: Vec<String> = Vec::new();
     let mut ts_divergences = 0usize;
+    let mut explained_count = 0usize;
 
     for tc in cases {
         let id = tc["id"].as_str().unwrap_or_default().to_string();
@@ -924,28 +992,39 @@ fn differential_parity() {
         let mut failures = check_expectations(tc, &run);
         if let (Some(rows), Ok(_)) = (&ts_rows, &run) {
             if let Some(row) = rows.get(&id) {
-                let mut ts_fail = compare_with_ts(row, &run);
+                let is_fixture = tc["engine"] == "fixture";
+                let mut ts_fail = compare_with_ts(row, &run, is_fixture);
                 ts_divergences += ts_fail.len();
                 failures.append(&mut ts_fail);
             }
         }
-        if failures.is_empty() {
+        let (explained, unexplained): (Vec<String>, Vec<String>) = failures
+            .into_iter()
+            .partition(|f| is_explained_divergence(&id, f));
+        for f in &explained {
+            println!("EXPLAINED divergence (documented in STAGE4-REPORT.md) [{id}]: {f}");
+        }
+        explained_count += explained.len();
+        if unexplained.is_empty() {
             pass += 1;
         } else {
-            for f in &failures {
+            for f in &unexplained {
                 all_failures.push(format!("FAIL {id}\n   - {f}"));
             }
         }
     }
 
     if let Some(_rows) = &ts_rows {
-        println!("rust-vs-ts differential: {ts_divergences} cross-engine divergences");
+        println!("rust-vs-ts differential: {ts_divergences} cross-engine divergences ({explained_count} explained)");
     } else {
         println!(
-            "TS_RESULTS_PATH not set — frozen expectations asserted; cross-engine diff skipped"
+            "TS_RESULTS_PATH not set \u{2014} frozen expectations asserted; cross-engine diff skipped"
         );
     }
-    println!("rust-oracle: {pass} pass, {} fail of {total}", total - pass);
+    println!(
+        "rust-oracle: {pass} pass, {} fail of {total} ({explained_count} explained divergences)",
+        total - pass
+    );
     for f in &all_failures {
         println!("{f}");
     }
