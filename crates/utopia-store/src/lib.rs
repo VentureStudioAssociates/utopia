@@ -20,6 +20,7 @@ pub mod members;
 pub mod memory;
 pub mod model_limits;
 pub mod ois_kernel;
+pub mod ois_surfaces;
 pub mod ontology;
 pub mod palette;
 pub mod pending;

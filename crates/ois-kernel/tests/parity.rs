@@ -1,5 +1,4 @@
 //! Differential parity harness for the OIS kernel port.
-//! Differential parity harness for the OIS kernel port.
 //!
 //! Runs the shared parity corpus (74 frozen cases derived, with recorded
 //! provenance, from the TypeScript oracle's R1-T01–T15, R1-T22/T27/T28/T29 and
@@ -630,6 +629,168 @@ fn run_promotion(input: &Value) -> Result<Value, String> {
     Ok(json!({ "items": items }))
 }
 
+// ---------------------------------------------------------------------------
+// Stage-4a kernel-surface runners: decision surfacing, criterion
+// currentness, governance-event churn origins, and context manifests.
+// Projections are normalized to the TypeScript driver's shapes 1:1.
+// ---------------------------------------------------------------------------
+
+fn kernel_envelopes(value: &Value) -> Result<Vec<ois_kernel::KernelEnvelope>, String> {
+    serde_json::from_value::<Vec<ois_kernel::KernelEnvelope>>(value.clone())
+        .map_err(|e| format!("envelope parse: {e}"))
+}
+
+/// Decisions that apply to a resource (exact full-ref match on
+/// `applies_to_refs`, input order preserved), projected to the driver's
+/// normalized shape.
+fn run_decision_surface(input: &Value) -> Result<Value, String> {
+    let decisions: Vec<ois_kernel::KernelEnvelope> =
+        kernel_envelopes(input.get("decisions").ok_or("missing decisions")?)?;
+    let resource_ref = input["resource_ref"]
+        .as_str()
+        .ok_or("missing resource_ref")?
+        .to_string();
+    let records: Vec<ois_kernel::DecisionRecord> = decisions
+        .iter()
+        .map(ois_kernel::decision_record_from_envelope)
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.0)?;
+    // The DecisionRecord is envelope-free; walk (envelope, record) pairs in
+    // input order (oldest-first) so each ref comes from its own envelope.
+    let items: Vec<Value> = decisions
+        .iter()
+        .zip(records.iter())
+        .filter(|(_, record)| record.applies_to_refs.iter().any(|r| r == &resource_ref))
+        .map(|(envelope, record)| {
+            json!({
+                "decision_ref": ois_kernel::decisions::decision_ref(envelope),
+                "decision_kind": record.decision_kind,
+                "outcome": record.outcome,
+                "recorded_at": record.recorded_at,
+            })
+        })
+        .collect();
+    let count = items.len();
+    Ok(json!({ "items": items, "count": count }))
+}
+
+/// Criterion currentness from an objective's version history.
+fn run_criterion(input: &Value) -> Result<Value, String> {
+    let history = kernel_envelopes(
+        input
+            .get("objective_history")
+            .ok_or("missing objective_history")?,
+    )?;
+    let criterion_id = input["criterion_id"]
+        .as_str()
+        .ok_or("missing criterion_id")?;
+    let resolved = ois_kernel::resolve_criterion(&history, criterion_id).map_err(|e| e.0)?;
+    Ok(json!({
+        "state": resolved.state_word(),
+        "criterion_version": resolved.criterion_version,
+        "superseded_version": resolved.superseded_version,
+        "objective_version_recorded_at": resolved
+            .objective_version
+            .as_ref()
+            .map(|e| e.recorded_at.clone()),
+    }))
+}
+
+/// Per-window unique churn origins and distinct touched units.
+fn run_churn(input: &Value) -> Result<Value, String> {
+    let decisions = kernel_envelopes(input.get("decisions").ok_or("missing decisions")?)?;
+    let events = kernel_envelopes(
+        input
+            .get("governance_events")
+            .ok_or("missing governance_events")?,
+    )?;
+    let keys: Vec<String> = serde_json::from_value(
+        input
+            .get("in_window_churn_keys")
+            .ok_or("missing in_window_churn_keys")?
+            .clone(),
+    )
+    .map_err(|e| e.to_string())?;
+    let window = input.get("window").ok_or("missing window")?;
+    let start = window["start"].as_str().ok_or("window.start")?;
+    let end = window["end"].as_str().ok_or("window.end")?;
+    let unique = ois_kernel::unique_churn_origins(&keys, &decisions, &events, start, end)
+        .map_err(|e| e.0)?;
+    let touched = ois_kernel::events_surface::touched_units(&events, start, end);
+    Ok(json!({ "unique_churn_origins": unique, "touched_units": touched }))
+}
+
+/// Context-manifest compilation per the frozen schema contract.
+fn run_manifest(input: &Value) -> Result<Value, String> {
+    let compile = input.get("compile").ok_or("missing compile")?;
+    let omits = compile
+        .get("omissions")
+        .and_then(|v| v.as_array())
+        .cloned()
+        .unwrap_or_default();
+    let omissions: Vec<ois_kernel::Omission> = omits
+        .iter()
+        .map(|o| {
+            serde_json::from_value::<ois_kernel::Omission>(o.clone())
+                .map_err(|e| format!("omission parse: {e}"))
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    let str_array = |key: &str| -> Vec<String> {
+        compile
+            .get(key)
+            .and_then(|v| v.as_array())
+            .map(|a| {
+                a.iter()
+                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                    .collect()
+            })
+            .unwrap_or_default()
+    };
+    let manifest = ois_kernel::compile_manifest(&ois_kernel::context_manifest::CompileInput {
+        manifest_id: compile["manifest_id"]
+            .as_str()
+            .unwrap_or_default()
+            .to_string(),
+        governance_root_ref: compile["governance_root_ref"]
+            .as_str()
+            .unwrap_or_default()
+            .to_string(),
+        scope_refs: str_array("scope_refs"),
+        activity_ref: compile["activity_ref"]
+            .as_str()
+            .unwrap_or_default()
+            .to_string(),
+        depth: compile["depth"].as_str().unwrap_or_default().to_string(),
+        included_resource_refs: str_array("included_resource_refs"),
+        included_checkpoint_refs: str_array("included_checkpoint_refs"),
+        included_activity_refs: str_array("included_activity_refs"),
+        omissions,
+        basis_checkpoint_refs: str_array("basis_checkpoint_refs"),
+        basis_as_known_at: compile
+            .get("basis_as_known_at")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string()),
+        compiled_at: compile["compiled_at"]
+            .as_str()
+            .unwrap_or_default()
+            .to_string(),
+    })
+    .map_err(|e| e.0)?;
+    let omitted_kinds: Vec<String> = manifest
+        .omitted
+        .as_ref()
+        .map(|o| o.iter().map(|x| x.omission_kind.clone()).collect())
+        .unwrap_or_default();
+    let omitted_count = omitted_kinds.len();
+    Ok(json!({
+        "completeness": manifest.completeness,
+        "permission_envelope_ref": manifest.permission_envelope_ref,
+        "omitted_count": omitted_count,
+        "omitted_kinds": omitted_kinds,
+        "manifest_digest": manifest.manifest_digest,
+    }))
+}
+
 fn run_case(tc: &Value) -> Result<Value, String> {
     let input = &tc["input"];
     match tc["engine"].as_str().unwrap_or_default() {
@@ -640,6 +801,10 @@ fn run_case(tc: &Value) -> Result<Value, String> {
         "classify" => run_classify(input),
         "stale_base" => run_stale_base(input),
         "promotion" => run_promotion(input),
+        "decision_surface" => run_decision_surface(input),
+        "criterion" => run_criterion(input),
+        "churn_origins" => run_churn(input),
+        "manifest" => run_manifest(input),
         other => Err(format!("unknown engine {other}")),
     }
 }
